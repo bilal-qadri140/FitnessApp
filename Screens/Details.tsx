@@ -1,5 +1,5 @@
 import { Image, ScrollView, StyleSheet, Text, ToastAndroid, Touchable, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // Exercises Details data
 import Neck from '../Constants/Neck'
@@ -13,9 +13,7 @@ import { RootStackParamList } from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { responsiveFontSize, responsiveWidth } from 'react-native-responsive-dimensions'
 import { LightSpeedOutLeft } from 'react-native-reanimated';
-// import { Image } from 'expo-image/build/Image'
-// import { Image } from 'expo-image'
-// import { Image } from 'react-native-reanimated/lib/typescript/Animated'
+import { useFocusEffect } from '@react-navigation/native';
 
 type TypeData = {
   bodyPart: string
@@ -34,9 +32,12 @@ const Details = ({ navigation, route }: DetailsProps) => {
 
   const { index } = route.params
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [calories, setCalories] = useState<string>('0')
-
+  const [initialCal, setInitialCal] = useState<string>('')
+  const [calories, setCalories] = useState<string>(initialCal)
+  const [work, setWork] = useState<string>('')
   const [data, setData] = useState<TypeData[]>([])
+
+
   const checkExercise = () => {
     switch (index) {
       case 0:
@@ -62,29 +63,52 @@ const Details = ({ navigation, route }: DetailsProps) => {
     }
   }
 
+
+  const getCalories = async () => {
+    try {
+      const cal = await AsyncStorage.getItem('Kcal')
+      if (cal)
+        setInitialCal(cal)
+    } catch (e) {
+      // read error
+    }
+  }
+
   useEffect(() => {
     checkExercise()
   }, [])
 
-  
+  useFocusEffect(
+    useCallback(() => {
+      getCalories()
+    }, [])
+  )
 
-  const setCal = async () => {
+  const setCalData = async () => {
     try {
       await AsyncStorage.setItem('Kcal', calories)
-      console.log('data saved', calories);
-
+      console.log('data saved', calories)
     } catch (e) {
-      console.log('Data Storing error');
+      console.log('Data Storing error')
+    }
+  }
+
+  const setWorkData = async () => {
+    try {
+      await AsyncStorage.setItem('work', work)
+      console.log('data saved', work)
+    } catch (e) {
+      console.log('Data Storing error')
     }
   }
 
   const handleNext = () => {
-    console.log('ji');
-
     if (currentIndex < data.length - 1) {
       setCurrentIndex((cur) => cur + 1)
       setCalories(((+calories) + 2.5).toString())
-      setCal()
+      setWork(((+work) + 1).toString())
+      setWorkData()
+      setCalData()
     }
     else {
       ToastAndroid.show('All Exercises Completed!✌️', ToastAndroid.LONG)

@@ -1,20 +1,23 @@
-import { Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
 
 import { RootStackParamList } from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import ImageCarousel from '../Components/ImageCarousel'
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
-import BodyParts from '../Components/BodyParts'
 import LinearGradient from 'react-native-linear-gradient'
 import { bodyParts } from '../Constants'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native'
+
 
 type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Home'>
 
 const Home = ({ navigation }: NavigationProps) => {
   const [data, setData] = useState<string>()
   const [kcal, setKcal] = useState<string>()
+  const [work, setWork] = useState<string>()
+
   const getCalories = async () => {
     try {
       const cal = await AsyncStorage.getItem('Kcal')
@@ -22,12 +25,27 @@ const Home = ({ navigation }: NavigationProps) => {
         setKcal(cal)
     } catch (e) {
       // read error
+
+    }
+  }
+  const getWork = async () => {
+    try {
+      const work = await AsyncStorage.getItem('work')
+      if (work)
+        setWork(work)
+    } catch (e) {
+      // read error
     }
   }
 
-  useEffect(() => {
-    getCalories()
-  }, [kcal])
+
+  useFocusEffect(
+    useCallback(() => {
+      getCalories()
+      getWork()
+    }, [])
+  )
+
 
   return (
     <View style={styles.container}>
@@ -35,15 +53,15 @@ const Home = ({ navigation }: NavigationProps) => {
         <Text style={styles.headingText}>Home Work Out</Text>
         <View style={styles.topTextContainer}>
           <View >
-            <Text style={styles.topText}>0</Text>
+            <Text style={[styles.topText, { fontSize: 26 }]}>{work ? work : '0'}</Text>
             <Text style={styles.topText}>WORKOUT</Text>
           </View>
           <View >
-            <Text style={styles.topText}>{kcal? kcal:'0' }</Text>
+            <Text style={[styles.topText, { fontSize: 26 }]}>{kcal ? kcal : '0'}</Text>
             <Text style={styles.topText}>KCAL</Text>
           </View>
           <View >
-            <Text style={styles.topText}>0</Text>
+            <Text style={[styles.topText, { fontSize: 26 }]}>0</Text>
             <Text style={styles.topText}>MINUTES</Text>
           </View>
         </View>
@@ -54,9 +72,7 @@ const Home = ({ navigation }: NavigationProps) => {
         <ImageCarousel />
       </View>
 
-
       {/* Body Parts */}
-
       <View style={styles.bodyPartsContainer}>
         <Text style={styles.name}>Exercises</Text>
         <FlatList
@@ -120,8 +136,6 @@ const Home = ({ navigation }: NavigationProps) => {
           )
           }
         />
-
-
       </View >
     </View>
   )
@@ -132,7 +146,6 @@ export default Home
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#ccc'
   },
   topContainer: {
     width: '100%',
@@ -149,7 +162,7 @@ const styles = StyleSheet.create({
   topTextContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingTop: 20,
+    paddingTop: 10,
   },
   topText: {
     fontSize: 20,
@@ -165,7 +178,6 @@ const styles = StyleSheet.create({
   },
   bodyPartsContainer: {
     marginHorizontal: 12,
-    // paddingBottom: 10,
     flex: 1,
   },
   name: {
