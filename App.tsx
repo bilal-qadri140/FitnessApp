@@ -10,7 +10,7 @@ import Details from './Screens/Details';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Exercises from './Screens/Exercises';
-type data = {
+type item = {
   bodyPart: string
   equipment: string
   gifUrl: string
@@ -25,7 +25,7 @@ export type RootStackParamList = {
   Home: undefined
   Welcome: undefined
   Details: {
-    index:number
+    item: item
   }
   Exercises: {
     name: string
@@ -42,7 +42,11 @@ const App = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Welcome' component={Welcome} />
         <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name='Details' component={Details} />
+        <Stack.Screen name='Details' component={Details} options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+          animationDuration: 2000
+        }} />
         <Stack.Screen name='Exercises' component={Exercises} options={{
           presentation: 'modal',
           animation: 'slide_from_bottom',

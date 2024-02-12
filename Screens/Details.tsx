@@ -1,20 +1,14 @@
-import { Image, ScrollView, StyleSheet, Text, ToastAndroid, Touchable, TouchableOpacity, View } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// Exercises Details data
-import Neck from '../Constants/Neck'
-import Chest from '../Constants/Chest'
-import Cardio from '../Constants/Cardio'
-import LowerArms from '../Constants/LowerArms'
-import LowerLegs from '../Constants/LowerLegs'
-import Back from '../Constants/Back'
 
 import { RootStackParamList } from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { responsiveFontSize, responsiveWidth } from 'react-native-responsive-dimensions'
-import { LightSpeedOutLeft } from 'react-native-reanimated';
+import { responsiveWidth } from 'react-native-responsive-dimensions'
 import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
+// data type for props data
 type TypeData = {
   bodyPart: string
   equipment: string
@@ -30,91 +24,72 @@ type DetailsProps = NativeStackScreenProps<RootStackParamList, 'Details'>
 
 const Details = ({ navigation, route }: DetailsProps) => {
 
-  const { index } = route.params
+  const { item } = route.params
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [initialCal, setInitialCal] = useState<string>('')
-  const [calories, setCalories] = useState<string>(initialCal)
-  const [work, setWork] = useState<string>('')
+  const [initialCal, setInitialCal] = useState<number>()
+  const [work, setWork] = useState<number>()
+
+
   const [data, setData] = useState<TypeData[]>([])
 
-
-  const checkExercise = () => {
-    switch (index) {
-      case 0:
-        setData(Back)
-        break;
-      case 1:
-        setData(Cardio)
-        break;
-      case 2:
-        setData(LowerArms)
-        break;
-      case 3:
-        setData(LowerLegs)
-        break;
-      case 4:
-        setData(Chest)
-        break;
-      case 5:
-        setData(Neck)
-        break;
-      default:
-        break;
-    }
-  }
-
-
+  // getting data from Async Storage
   const getCalories = async () => {
     try {
       const cal = await AsyncStorage.getItem('Kcal')
+      const prevWork = await AsyncStorage.getItem('work')
+      if (prevWork)
+        setWork(+prevWork)
       if (cal)
-        setInitialCal(cal)
+        setInitialCal(+cal)
     } catch (e) {
-      // read error
+      console.log('Data fetching error');
+    }
+  }
+  // getting data from Async Storage
+  const getWork = async () => {
+    try {
+      const prevWork = await AsyncStorage.getItem('work')
+      if (prevWork)
+        setWork(+prevWork)
+      console.log('work is ', work);
+
+    } catch (e) {
+      console.log('Data fetching error');
     }
   }
 
-  useEffect(() => {
-    checkExercise()
-  }, [])
 
   useFocusEffect(
     useCallback(() => {
+      getWork()
       getCalories()
     }, [])
   )
 
-  const setCalData = async () => {
+  const setCalData = async (data: number) => {
     try {
-      await AsyncStorage.setItem('Kcal', calories)
-      console.log('data saved', calories)
+      await AsyncStorage.setItem('Kcal', data.toString())
+      console.log('data saved', data)
     } catch (e) {
       console.log('Data Storing error')
     }
   }
 
-  const setWorkData = async () => {
+  const setWorkData = async (data: number) => {
     try {
-      await AsyncStorage.setItem('work', work)
-      console.log('data saved', work)
+      await AsyncStorage.setItem('work', data.toString())
+      console.log('data saved', data)
     } catch (e) {
       console.log('Data Storing error')
     }
   }
 
-  const handleNext = () => {
-    if (currentIndex < data.length - 1) {
-      setCurrentIndex((cur) => cur + 1)
-      setCalories(((+calories) + 2.5).toString())
-      setWork(((+work) + 1).toString())
-      setWorkData()
-      setCalData()
-    }
-    else {
-      ToastAndroid.show('All Exercises Completed!✌️', ToastAndroid.LONG)
-      navigation.goBack()
-    }
+  const handleNext = async () => {
+    console.log('handel next data -> ' + initialCal)
+    setCalData(initialCal ? initialCal + 2.5 : 2.5)
+    setWorkData(work ? work + 1 : 0)
   }
+
   const handleSkip = () => {
     if (currentIndex < data.length - 1)
       setCurrentIndex((cur) => cur + 1)
@@ -130,13 +105,21 @@ const Details = ({ navigation, route }: DetailsProps) => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../assets/Images/LowerArms/band.gif')}
+          source={{ uri: item.gifUrl }}
           style={styles.image}
         />
+        <TouchableOpacity
+          style={styles.iconContainer}
+          activeOpacity={0.6}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name='close-circle' size={45} color={'red'}
+          />
+        </TouchableOpacity>
       </View>
-      <Text style={styles.headingText}>{data[currentIndex]?.name}</Text>
+      <Text style={styles.headingText}>{item.name}</Text>
 
-      <Text style={{ fontSize: 19, marginLeft: 10, color: '#666' }}>Equipment:   <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#444' }}>{data[currentIndex]?.equipment.toUpperCase()}</Text></Text>
+      <Text style={{ fontSize: 19, marginLeft: 10, color: '#666' }}>Equipment:   <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#444' }}>{item.equipment.toUpperCase()}</Text></Text>
 
       <Text style={[styles.headingText, { fontSize: 22, color: '#000' }]}>
         Instructions:
@@ -144,7 +127,7 @@ const Details = ({ navigation, route }: DetailsProps) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {
-          data[currentIndex]?.instructions.map((instruction, index) => (
+          item.instructions.map((instruction, index) => (
             <Text
               style={{
                 fontSize: 20,
@@ -166,8 +149,8 @@ const Details = ({ navigation, route }: DetailsProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={handleNext}>
-          <Text style={styles.buttonText}>Next</Text>
+          onPress={() => handleNext()}>
+          <Text style={styles.buttonText}>Done</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -195,6 +178,11 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
     borderBottomRightRadius: 35,
     borderBottomLeftRadius: 35
+  },
+  iconContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 15,
   },
   headingText: {
     fontSize: 20,

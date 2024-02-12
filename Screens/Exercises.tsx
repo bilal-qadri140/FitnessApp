@@ -6,20 +6,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 import { RootStackParamList } from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { responsiveHeight, responsiveScreenWidth, responsiveWidth } from 'react-native-responsive-dimensions'
-import { demoExercises } from '../Constants'
-import fitnessData from '../Constants/fitnessData'
+import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions'
 
-// Exercises Details data
-import Neck from '../Constants/Neck'
-import Chest from '../Constants/Chest'
-import Cardio from '../Constants/Cardio'
-import LowerArms from '../Constants/LowerArms'
-import LowerLegs from '../Constants/LowerLegs'
-import Back from '../Constants/Back'
-
-
-
+// data type for getting data from api call
 type TypeData = {
     bodyPart: string
     equipment: string
@@ -30,61 +19,47 @@ type TypeData = {
     secondaryMuscles: string[]
     instructions: string[]
 }
-
+// props for screen
 type ExercisesProps = NativeStackScreenProps<RootStackParamList, 'Exercises'>
 const Exercises = ({ route, navigation }: ExercisesProps) => {
-    const { name, image, index } = route.params
-    
+    const { name, image } = route.params
+
     const [data, setData] = useState<TypeData[]>([])
 
-    const checkExercise = () => {
-        switch (name) {
-            case 'back':
-                setData(Back)
-                break;
-            case 'cardio':
-                setData(Cardio)
-                break;
-            case 'lower arms':
-                setData(LowerArms)
-                break;
-            case 'lower legs':
-                setData(LowerLegs)
-                break;
-            case 'chest':
-                setData(Chest)
-                break;
-            case 'neck':
-                setData(Neck)
-                break;
-            default:
-                break;
-        }
+    // gettig Exercise data from Rapid APi
+    const getExercises = async (name: string) => {
+        const data = await fetchData(name)
+        if (data)
+            setData(data)
+        console.log('Data is : ', data);
     }
-
     useEffect(() => {
-        checkExercise()
+        if (name)
+            getExercises(name)
     }, [])
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.imageContainer}>
+                {/* image */}
                 <Image
                     source={image}
                     style={styles.image}
                 />
+                {/* Screen close icon */}
                 <TouchableOpacity
                     style={styles.iconContainer}
                     activeOpacity={0.6}
                     onPress={() => navigation.goBack()}
                 >
-                    <Icon name='caret-back' size={40} color={'white'}
-                        style={styles.icon}
-                    />
+                    <Icon name='close-circle' size={45} color={'red'} />
                 </TouchableOpacity>
             </View>
+            {/* heading name */}
             <Text style={styles.headingName}>{name.toUpperCase() + ' Exercises'}</Text>
-            <FlatList
+
+            {/* Exercises */}
+            {data != undefined ? <FlatList
                 data={data}
                 style={{ marginBottom: 10 }}
                 keyExtractor={item => item.name}
@@ -96,7 +71,7 @@ const Exercises = ({ route, navigation }: ExercisesProps) => {
                 }}
                 renderItem={({ item, index }) => (
                     <TouchableOpacity key={index} activeOpacity={0.7} onPress={() => {
-                        // navigation.navigate('Details')
+                        navigation.navigate('Details', { item: item })
                     }}>
                         <View style={{
                             flex: 1,
@@ -123,10 +98,15 @@ const Exercises = ({ route, navigation }: ExercisesProps) => {
                     </TouchableOpacity>
 
                 )}
-            />
-            <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Details',{index:index})}>
-                <Text style={styles.buttonText}>Start Exercise</Text>
-            </TouchableOpacity>
+            /> :
+                <Text style={{
+                    fontSize: 40,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    marginTop: '45%',
+                    color: '#000',
+                    
+                }}>Data not found 😒</Text>}
         </SafeAreaView>
     )
 }
@@ -153,13 +133,8 @@ const styles = StyleSheet.create({
     iconContainer: {
         position: 'absolute',
         top: 20,
-        left: 20,
-        backgroundColor: '#f00',
-        borderRadius: 30,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingRight: 3,
+        right: 15,
+
     },
     image: {
         width: '100%',

@@ -2,7 +2,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "cable",
-        "gifUrl": "https://v2.exercisedb.io/image/TqnKq0eY2gCcro",
+        "gifUrl": "https://v2.exercisedb.io/image/-8IMLCVtu51Bzs",
         "id": "0007",
         "name": "alternate lateral pulldown",
         "target": "lats",
@@ -21,7 +21,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "body weight",
-        "gifUrl": "https://v2.exercisedb.io/image/NnL1dk3XPG3drn",
+        "gifUrl": "https://v2.exercisedb.io/image/K0a2YUdT0DUmZN",
         "id": "3293",
         "name": "archer pull up",
         "target": "lats",
@@ -41,7 +41,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "leverage machine",
-        "gifUrl": "https://v2.exercisedb.io/image/gg7h5-nWtkJjJE",
+        "gifUrl": "https://v2.exercisedb.io/image/4djWvqT5HjUtnq",
         "id": "0015",
         "name": "assisted parallel close grip pull-up",
         "target": "lats",
@@ -62,7 +62,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "leverage machine",
-        "gifUrl": "https://v2.exercisedb.io/image/mpAdo7lqKhkxwB",
+        "gifUrl": "https://v2.exercisedb.io/image/6CGHwQn-JKwlvW",
         "id": "0017",
         "name": "assisted pull-up",
         "target": "lats",
@@ -83,7 +83,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "leverage machine",
-        "gifUrl": "https://v2.exercisedb.io/image/u-7YdXKja-gdgP",
+        "gifUrl": "https://v2.exercisedb.io/image/1doOc5aGLuNg2Q",
         "id": "1431",
         "name": "assisted standing chin-up",
         "target": "lats",
@@ -104,7 +104,7 @@ export default [
     {
         "bodyPart": "back",
         "equipment": "leverage machine",
-        "gifUrl": "https://v2.exercisedb.io/image/An7XUiWye5qNFq",
+        "gifUrl": "https://v2.exercisedb.io/image/oOurO9wMgYPBv3",
         "id": "1432",
         "name": "assisted standing pull-up",
         "target": "lats",
