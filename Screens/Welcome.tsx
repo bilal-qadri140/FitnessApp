@@ -1,6 +1,6 @@
 import { Button, Image, ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import Animated, { BounceInDown, FadeInDown, FlipInEasyX, FlipInXDown, FlipOutEasyX } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { RootStackParamList } from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {

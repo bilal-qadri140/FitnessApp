@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 10,
     color: '#555',
-
+    textTransform:'capitalize'
   },
   button: {
     width: responsiveWidth(45),

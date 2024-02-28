@@ -35,7 +35,7 @@ const ImageCarousel = () => {
             hasParallaxImages={true}
             sliderWidth={responsiveWidth(100)}
             firstItem={1}
-            autoplayInterval={4000}
+            autoplayInterval={3000}
             itemWidth={responsiveWidth(100) - 70}
             slideStyle={{ display: 'flex', alignItems: 'center' }}
         />

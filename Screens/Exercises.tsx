@@ -91,8 +91,11 @@ const Exercises = ({ route, navigation }: ExercisesProps) => {
                             marginLeft: 15,
                             fontSize: 18,
                             fontWeight: 'bold',
-                            color: '#666'
-                        }}>
+                            color: '#666',
+                            textTransform:'capitalize'
+                        }}
+                            
+                        >
                             {item.name.length > 20 ? item.name.slice(0, 17) + '...' : item.name}
                         </Text>
                     </TouchableOpacity>
@@ -105,7 +108,7 @@ const Exercises = ({ route, navigation }: ExercisesProps) => {
                     textAlign: 'center',
                     marginTop: '45%',
                     color: '#000',
-                    
+
                 }}>Data not found 😒</Text>}
         </SafeAreaView>
     )
